@@ -9,7 +9,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: 'http://localhost:3000', // Allow requests from this origin
-  credentials: true, // Allow cookies to be sent along with the request
+  credentials: true, // Allow cookies to be sent along with the 
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
