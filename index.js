@@ -46,29 +46,34 @@ app.get('/products', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-// Route to fetch all veg products
+ 
+const Product1 = mongoose.model('Product1', productSchema, 'itemdetails');
+// Route to fetch all products
 app.get('/veg', async (req, res) => {
   try {
-    console.log('Fetching veg products...');
-    const products = await Product.find({ category: 'vegetarian' }); // Assuming there's a 'category' field indicating product type
-    console.log('Veg products fetched successfully:', products);
+    console.log('Fetching products...');
+    const products = await Product1.find({});
+    console.log('Products fetched successfully:', products);
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching veg products:', error);
+    console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Route to fetch all tiffins
+
+
+
+const Product2 = mongoose.model('Product2', productSchema, 'tiffins');
+// Route to fetch all products
 app.get('/tiffins', async (req, res) => {
   try {
-    console.log('Fetching tiffins...');
-    const products = await Product.find({ category: 'tiffin' }); // Assuming there's a 'category' field indicating product type
-    console.log('Tiffins fetched successfully:', products);
+    console.log('Fetching products...');
+    const products = await Product2.find({});
+    console.log('Products fetched successfully:', products);
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching tiffins:', error);
+    console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
