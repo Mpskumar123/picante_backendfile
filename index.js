@@ -3,13 +3,12 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
-
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://picante-restuarant-cxiv.onrender.com', // Allow requests from this origin
-  credentials: true, // Allow cookies to be sent along with the 
+  origin: ['http://localhost:3000', 'https://picante-restuarant-cxiv.onrender.com'],
+  credentials: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -34,6 +33,7 @@ const productSchema = new mongoose.Schema({
 });
 
 const Product = mongoose.model('Product', productSchema, 'details');
+
 // Route to fetch all products
 app.get('/products', async (req, res) => {
   try {
@@ -47,34 +47,79 @@ app.get('/products', async (req, res) => {
   }
 });
 
-
-const Product1 = mongoose.model('Product1', productSchema, 'itemdetails');
-// Route to fetch all products
+// Route to fetch all veg products
 app.get('/veg', async (req, res) => {
   try {
-    console.log('Fetching products...');
-    const products = await Product1.find({});
-    console.log('Products fetched successfully:', products);
+    console.log('Fetching veg products...');
+    const products = await Product.find({ category: 'vegetarian' }); // Assuming there's a 'category' field indicating product type
+    console.log('Veg products fetched successfully:', products);
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('Error fetching veg products:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-
-
-
-const Product2 = mongoose.model('Product2', productSchema, 'tiffins');
-// Route to fetch all products
+// Route to fetch all tiffins
 app.get('/tiffins', async (req, res) => {
   try {
-    console.log('Fetching products...');
-    const products = await Product2.find({});
-    console.log('Products fetched successfully:', products);
+    console.log('Fetching tiffins...');
+    const products = await Product.find({ category: 'tiffin' }); // Assuming there's a 'category' field indicating product type
+    console.log('Tiffins fetched successfully:', products);
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('Error fetching tiffins:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Define the User model for the "users" collection in the "resto" database
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+
+const User = mongoose.model('User', userSchema, 'users');
+
+// Route for user login
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if username and password match any records in the database
+    const user = await User.findOne({ username, password });
+
+    if (user) {
+      res.status(200).send('Login successful');
+    } else {
+      res.status(401).send('Unauthorized');
+    }
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
+// Route for user signup
+app.post('/signup', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if username already exists
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    // Create new user
+    const newUser = new User({ username, password });
+    await newUser.save();
+
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
